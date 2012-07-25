@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("FileMonkey")]
 [assembly: AssemblyDescription("Automatic File Cataloger")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("FileMonkey.Picasso")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2012")]
+[assembly: AssemblyCompany("Codellion")]
+[assembly: AssemblyProduct("FileMonkey")]
+[assembly: AssemblyCopyright("Codellion 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Windows;
 // Puede especificar todos los valores o establecer como predeterminados los números de versión de compilación y de revisión 
 // mediante el asterisco ('*'), como se muestra a continuación:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.5.0.0")]
+[assembly: AssemblyFileVersion("0.5.0.0")]

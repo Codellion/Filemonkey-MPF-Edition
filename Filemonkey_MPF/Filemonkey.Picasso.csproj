@@ -50,19 +50,24 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>FileMonkey.Picasso.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=1.2.0.30714, Culture=neutral, PublicKeyToken=b32731d11ce58905">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Filemonkey\FileMonkey.Picasso\bin\Debug\log4net.dll</HintPath>
+      <HintPath>..\..\..\Libs\External\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Memento.DataAccess.OleDb">
-      <HintPath>..\..\..\..\..\Desktop\Memento Persistence Framework\Releases\v0.9 - Beta 1\Providers\Memento.DataAccess.OleDb.dll</HintPath>
+    <Reference Include="Memento.Persistence, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libs\Memento Persistence Framework\Releases\0.9.0.0\Memento.Persistence.dll</HintPath>
     </Reference>
-    <Reference Include="Memento.Persistence">
-      <HintPath>..\..\..\..\..\Desktop\Memento Persistence Framework\Releases\v0.9 - Beta 1\Memento.Persistence.dll</HintPath>
-    </Reference>
-    <Reference Include="Memento.Persistence.Commons">
-      <HintPath>..\Filemonkey.Pandora\bin\Debug\Memento.Persistence.Commons.dll</HintPath>
+    <Reference Include="Memento.Persistence.Commons, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libs\Memento Persistence Framework\Releases\0.9.0.0\Memento.Persistence.Commons.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

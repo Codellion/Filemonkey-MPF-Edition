@@ -31,17 +31,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Memento.DataAccess">
-      <HintPath>..\..\..\..\..\Desktop\Memento Persistence Framework\Releases\v0.9 - Beta 1\Memento.DataAccess.dll</HintPath>
+    <Reference Include="Memento.DataAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libs\Memento Persistence Framework\Releases\0.9.0.0\Memento.DataAccess.dll</HintPath>
     </Reference>
-    <Reference Include="Memento.DataAccess.OleDb">
-      <HintPath>..\..\..\..\..\Desktop\Memento Persistence Framework\Releases\v0.9 - Beta 1\Providers\Memento.DataAccess.OleDb.dll</HintPath>
+    <Reference Include="Memento.DataAccess.OleDb, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libs\Memento Persistence Framework\Releases\0.9.0.0\Providers\Memento.DataAccess.OleDb.dll</HintPath>
     </Reference>
-    <Reference Include="Memento.Persistence">
-      <HintPath>..\..\..\..\..\Desktop\Memento Persistence Framework\Releases\v0.9 - Beta 1\Memento.Persistence.dll</HintPath>
+    <Reference Include="Memento.Persistence, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libs\Memento Persistence Framework\Releases\0.9.0.0\Memento.Persistence.dll</HintPath>
     </Reference>
-    <Reference Include="Memento.Persistence.Commons">
-      <HintPath>..\..\..\..\..\Desktop\Memento Persistence Framework\Releases\v0.9 - Beta 1\Memento.Persistence.Commons.dll</HintPath>
+    <Reference Include="Memento.Persistence.Commons, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libs\Memento Persistence Framework\Releases\0.9.0.0\Memento.Persistence.Commons.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
