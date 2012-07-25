@@ -1,0 +1,9 @@
+﻿<Window x:Class="FileMonkey.Picasso.Log"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Log" Height="414" Width="669" Loaded="Window_Loaded">
+    <Grid>
+        <CheckBox Name="chkBlockVisor" Margin="10 10 0 10" Content="Desactivar autopaginación del visor" />
+        <RichTextBox Name="txtLogger"  VerticalScrollBarVisibility="Auto" TextChanged="txtLogger_TextChanged" Margin="0,35,0,0" />
+    </Grid>
+</Window>
