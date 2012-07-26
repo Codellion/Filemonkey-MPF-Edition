@@ -30,14 +30,18 @@ namespace FileMonkey.Picasso
 
         private void InspectorsRefresh(Inspector inspector, Boolean added = false)
         {
-            List<Inspector> lstInspectors;
+            var lstInspectors = new List<Inspector>();
 
             if (inspector == null)
             {
-                IPersistence<Inspector> servInsp = new Persistence<Inspector>();
+                IPersistence<FileInspector> servInspF = new Persistence<FileInspector>();
 
-                lstInspectors = servInsp.GetEntities() as List<Inspector>;
-                if (lstInspectors != null) lstInspectors.ForEach(FillRulesAux);
+                lstInspectors.AddRange(servInspF.GetEntities(new FileInspector(){Enable = null}));
+                lstInspectors.ForEach(FillRulesAux);
+
+                IPersistence<ServiceInspector> servInspV = new Persistence<ServiceInspector>();
+
+                lstInspectors.AddRange(servInspV.GetEntities());
             }
             else
             {
@@ -56,8 +60,10 @@ namespace FileMonkey.Picasso
             lstVInspectors.ItemsSource = lstInspectors;
         }
 
-        private void FillRulesAux(Inspector inspector)
+        private void FillRulesAux(Inspector fInspector)
         {
+            var inspector = fInspector as FileInspector;
+
             if (!inspector.Enable.HasValue || !inspector.CheckPeriod.HasValue)
                 return; 
 
@@ -111,12 +117,12 @@ namespace FileMonkey.Picasso
         {
             if (lstVInspectors.SelectedIndex != -1)
             {
-                var inspSelected = (Inspector)lstVInspectors.SelectedValue;
+                var inspSelected = (FileInspector)lstVInspectors.SelectedValue;
 
                 var inspDetail = new InspectorDetail(inspSelected);
                 inspDetail.ShowDialog();
 
-                var lstInspectors = (List<Inspector>)lstVInspectors.ItemsSource;
+                var lstInspectors = (List<FileInspector>)lstVInspectors.ItemsSource;
 
                 inspSelected = inspDetail.Inspector;
 
@@ -134,17 +140,7 @@ namespace FileMonkey.Picasso
 
         private void pnlNewInspector_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            var inspector = new Inspector { Path = "Seleccione una carpeta para rastrear" };
-
-            var inspDetail = new InspectorDetail(inspector);
-            inspDetail.ShowDialog();
-
-            inspector = inspDetail.Inspector;
-
-            if(inspector.InspectorId.HasValue)
-            {
-                InspectorsRefresh(inspector, true);    
-            }
+            pnlNewInspector.ContextMenu.IsOpen = true;
         }
 
         private void pnlDeleteInspector_MouseUp(object sender, MouseButtonEventArgs e)
@@ -186,10 +182,21 @@ namespace FileMonkey.Picasso
             {
                 var inspSelected = (Inspector)lstVInspectors.SelectedValue;
 
-                IPersistence<Inspector> servInsp = new Persistence<Inspector>();
-                inspSelected.Enable = !inspSelected.Enable;
+                if(inspSelected.InspectorType == (int) Inspector.EnumInspectorType.File)
+                {
+                    IPersistence<FileInspector> servInsp = new Persistence<FileInspector>();
+                    inspSelected.Enable = !inspSelected.Enable;
 
-                servInsp.PersistEntity(inspSelected);
+                    servInsp.PersistEntity(inspSelected as FileInspector);
+                }
+
+                if (inspSelected.InspectorType == (int)Inspector.EnumInspectorType.Service)
+                {
+                    IPersistence<ServiceInspector> servInsp = new Persistence<ServiceInspector>();
+                    inspSelected.Enable = !inspSelected.Enable;
+
+                    servInsp.PersistEntity(inspSelected as ServiceInspector);
+                }
             
                 if (inspSelected.Enable.Value)
                 {
@@ -213,6 +220,36 @@ namespace FileMonkey.Picasso
             {
                 MessageBox.Show("Por favor, seleccione un inspector de la lista");
             }    
+        }
+
+        private void mnServiceR_Click(object sender, RoutedEventArgs e)
+        {
+            var inspector = new ServiceInspector();
+
+            var inspDetail = new ServiceInspectorDetail(inspector);
+            inspDetail.ShowDialog();
+
+            inspector = inspDetail.Inspector;
+
+            if (inspector.InspectorId.HasValue)
+            {
+                InspectorsRefresh(inspector, true);
+            }
+        }
+
+        private void mnFileR_Click(object sender, RoutedEventArgs e)
+        {
+            var inspector = new FileInspector { Path = "Seleccione una carpeta para rastrear" };
+
+            var inspDetail = new InspectorDetail(inspector);
+            inspDetail.ShowDialog();
+
+            inspector = inspDetail.Inspector;
+
+            if (inspector.InspectorId.HasValue)
+            {
+                InspectorsRefresh(inspector, true);
+            }
         }
     }
 }

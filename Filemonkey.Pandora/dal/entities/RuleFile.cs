@@ -70,7 +70,7 @@ namespace FileMonkey.Pandora.dal.entities
         }
 
         [Relation("Rules", RelationType.Reference)]
-        public Reference<Inspector> Inspector { set; get; }
+        public Reference<FileInspector> Inspector { set; get; }
 
         [Transient]
         public String ImagePath { get; set; }

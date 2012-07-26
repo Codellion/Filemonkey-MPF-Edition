@@ -56,9 +56,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="dal\entities\ServiceInspector.cs" />
     <Compile Include="dal\entities\Inspector.cs" />
+    <Compile Include="dal\entities\FileInspector.cs" />
     <Compile Include="dal\entities\RuleFile.cs" />
     <Compile Include="dbl\RuleFactory.cs" />
+    <Compile Include="dbl\Settings.cs" />
     <Compile Include="dpl\InspectorHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

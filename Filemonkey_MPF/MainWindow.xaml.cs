@@ -33,7 +33,7 @@ namespace FileMonkey.Picasso
             var inspDetail = new InspectorDetail();
             inspDetail.ShowDialog();
 
-            this.Focus();
+            Focus();
         }
 
         private void pnlCambiarSonar_MouseUp(object sender, MouseButtonEventArgs e)
@@ -105,6 +105,14 @@ namespace FileMonkey.Picasso
         private void Window_Closed(object sender, EventArgs e)
         {
             Application.Current.Shutdown();
+        }
+
+        private void Image_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            var vOpciones = new Settings();
+            vOpciones.ShowDialog();
+
+            Focus();
         }
     }
 }

@@ -76,6 +76,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libs\Memento Persistence Framework\Releases\0.9.0.0\Memento.Persistence.Commons.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
@@ -96,6 +97,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ServiceInspectorDetail.xaml.cs">
+      <DependentUpon>ServiceInspectorDetail.xaml</DependentUpon>
+    </Compile>
     <Compile Include="InspectorDetail.xaml.cs">
       <DependentUpon>InspectorDetail.xaml</DependentUpon>
     </Compile>
@@ -121,6 +125,10 @@
     <Compile Include="userControls\Name.xaml.cs">
       <DependentUpon>Name.xaml</DependentUpon>
     </Compile>
+    <Page Include="ServiceInspectorDetail.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="InspectorDetail.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -241,6 +249,7 @@
     <Content Include="DataContext.sdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\gear.png" />
     <Resource Include="images\pushover_off.png" />
     <Resource Include="images\pushover_on.png" />
   </ItemGroup>

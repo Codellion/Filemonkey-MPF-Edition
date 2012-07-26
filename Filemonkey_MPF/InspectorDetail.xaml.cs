@@ -19,20 +19,20 @@ namespace FileMonkey.Picasso
     /// </summary>
     public partial class InspectorDetail : Window
     {
-        public Inspector Inspector { get; set; }
+        public FileInspector Inspector { get; set; }
 
         public Boolean OptionPressed { set; get; }
         
         public InspectorDetail()
         {
             InitializeComponent();
-            Inspector = new Inspector { Path = "Seleccione una carpeta para rastrear" };
+            Inspector = new FileInspector { Path = "Seleccione una carpeta para rastrear" };
 
             App.ActualInspectorDetail = this;
             this.Owner = App.Home;
         }
 
-        public InspectorDetail(Inspector inspector)
+        public InspectorDetail(FileInspector inspector)
         {
             InitializeComponent();
             this.Inspector = inspector;
@@ -48,7 +48,7 @@ namespace FileMonkey.Picasso
             slPeriod.Value = Inspector.CheckPeriod.HasValue?Inspector.CheckPeriod.Value : 0;
             txtPeriod.Text = GetPeriodText((int)slPeriod.Value);
 
-            if (Inspector.Action == (int)Inspector.TypeActions.MoveSubDir)
+            if (Inspector.Action == (int) FileInspector.TypeActions.MoveSubDir)
             {
                 rbtMoveSubDir.IsChecked = true;
 
@@ -230,6 +230,12 @@ namespace FileMonkey.Picasso
                 }
             }
 
+            if ((Inspector.Rules.Value == null) || 
+                (Inspector.Rules.Value != null && Inspector.Rules.Value.Count == 0))
+            {
+                error += "Se debe de especificar alguna regla. \n";
+            }
+
             if(!string.IsNullOrWhiteSpace(error))
             {
                 MessageBox.Show(error);
@@ -245,18 +251,18 @@ namespace FileMonkey.Picasso
 
                     if (rbtMoveSubDir.IsChecked.HasValue && rbtMoveSubDir.IsChecked.Value)
                     {
-                        Inspector.Action = (int)Inspector.TypeActions.MoveSubDir;
+                        Inspector.Action = (int)FileInspector.TypeActions.MoveSubDir;
                         Inspector.SubDirAction = txtPathAction.Text;
                     }
                     else
                     {
-                        Inspector.Action = (int)Inspector.TypeActions.DeleteFiles;
+                        Inspector.Action = (int)FileInspector.TypeActions.DeleteFiles;
                         Inspector.SubDirAction = String.Empty;
                     }
 
                     Inspector.CheckPeriod = (int) slPeriod.Value;
 
-                    var servInsp = db.CreatePersistenceService<Inspector>() as IPersistence<Inspector>;
+                    var servInsp = db.CreatePersistenceService<FileInspector>() as IPersistence<FileInspector>;
 
                     if (servInsp != null) servInsp.PersistEntity(Inspector);
                     db.SaveChanges();

@@ -9,13 +9,14 @@ namespace FileMonkey.Pandora.dal.entities
 {
     public class Inspector : Entity
     {
-        public enum TypeActions
+        public enum EnumInspectorType
         {
-            MoveSubDir,
-            DeleteFiles
+            File,
+            Service
         }
 
         [PrimaryKey(Generator = KeyGenerationType.Memento)]
+        [Field(Name = "InspectorId")]
         public int? InspectorId
         {
             set { Set(value); }
@@ -23,11 +24,6 @@ namespace FileMonkey.Pandora.dal.entities
         }
 
         public String Name
-        {
-            set { Set(value); }
-            get { return Get<string>(); }
-        }
-        public String Path
         {
             set { Set(value); }
             get { return Get<string>(); }
@@ -47,11 +43,6 @@ namespace FileMonkey.Pandora.dal.entities
             set { Set(value); }
             get { return Get<int?>(); }
         }
-        public String SubDirAction
-        {
-            set { Set(value); }
-            get { return Get<string>(); }
-        }
 
         [Field(Name = "Push")]
         public Boolean? EnablePushNotification
@@ -59,12 +50,11 @@ namespace FileMonkey.Pandora.dal.entities
             set { Set(value); }
             get { return Get<Boolean?>(); }
         }
-        
-        [Relation("Inspector", RelationType.Dependences)]
-        public Dependences<RuleFile> Rules
+
+        public int? InspectorType
         {
             set { Set(value); }
-            get { return Get<Dependences<RuleFile>>(); }
+            get { return Get<int?>(); }
         }
         
         public Inspector()

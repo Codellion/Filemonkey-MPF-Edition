@@ -1,7 +1,7 @@
 ﻿<Window x:Class="FileMonkey.Picasso.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Filemonkey - Automatic File Cataloger" Height="330" Width="803" ResizeMode="NoResize" Loaded="Window_Loaded" Closed="Window_Closed" Icon="/Filemonkey;component/Resources/icon.ico">
+        Title="Filemonkey - Automatic File Cataloger" Height="330" Width="803" ResizeMode="NoResize" Loaded="Window_Loaded" Closed="Window_Closed" Icon="/Filemonkey;component/Resources/icon.ico" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -22,7 +22,7 @@
             <Image DataContext="Ayude a mejorar el programa" Source="/Resources/bulb.png" Width="32" Height="32" Stretch="Uniform" Margin="0 10 0 0" Cursor="Hand" MouseEnter="imgOpts_MouseEnter" MouseLeave="imgOpts_MouseLeave"/>
         </StackPanel>
         <StackPanel Grid.Row="0" Width="Auto" Margin="0 15 0 0" Height="Auto" Orientation="Horizontal" VerticalAlignment="Center">
-            <Label Content="Codellion 2012" VerticalContentAlignment="Center" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="29,0,0,0" Name="label1" FontFamily="Moire" FontWeight="Bold" FontSize="16" />            
+            <Label Content=" {code|llion} 2012" VerticalContentAlignment="Center" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="29,0,0,0" Name="label1" FontFamily="Moire" FontWeight="Bold" FontSize="16" />            
             <Label  Content="FILEMONKEY" Margin="140 0 0 0" Height="62" HorizontalAlignment="Right" Name="label2"  FontSize="50" FontFamily="Moire" FontWeight="Bold" />
         </StackPanel>
         <Image Grid.Row="1" Height="150" HorizontalAlignment="Left" Margin="29,0,0,0" Name="image1" Stretch="None" VerticalAlignment="Top" Width="138" Source="/FileMonkey;component/Resources/monkey_A.png" />
@@ -56,7 +56,7 @@
                 <Label Content="" Width="365" FontSize="14" Height="Auto" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" VerticalAlignment="Center" Name="lblOpciones"></Label>
             </StackPanel>
             <StackPanel Width="Auto" Height="Auto" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Image DataContext="Opciones" Source="/Resources/tools.png" Width="32" Height="32" Stretch="Fill" Cursor="Hand" MouseEnter="imgOpts_MouseEnter" MouseLeave="imgOpts_MouseLeave"/>
+                <Image DataContext="Opciones" Source="/Resources/tools.png" Width="32" Height="32" Stretch="Fill" Cursor="Hand" MouseEnter="imgOpts_MouseEnter" MouseLeave="imgOpts_MouseLeave" MouseUp="Image_MouseUp" />
                 <Image DataContext="Acceso a funciones experimentales" Source="/Resources/lab.png" Width="32" Height="32" Stretch="Fill" Margin="10 0 0 0" Cursor="Hand" MouseEnter="imgOpts_MouseEnter" MouseLeave="imgOpts_MouseLeave"/>
                 <Image Name="btnSalir" DataContext="Salir de la aplicación" Source="/Resources/plug.png" Width="32" Height="32" Stretch="Fill" Margin="10 0 0 0" MouseUp="btnSalir_MouseUp" Cursor="Hand" MouseEnter="imgOpts_MouseEnter" MouseLeave="imgOpts_MouseLeave"/>
             </StackPanel>

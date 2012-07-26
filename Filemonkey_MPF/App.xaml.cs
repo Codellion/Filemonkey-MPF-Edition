@@ -5,15 +5,20 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Windows;
 using System.ComponentModel;
+using System.Xml.Serialization;
 using FileMonkey.Pandora.dal;
 using FileMonkey.Pandora.dal.entities;
 using System.IO;
+using Filemonkey.Pandora.dbl;
 using Memento.Persistence;
 using Memento.Persistence.Commons.Keygen;
 using Memento.Persistence.Interfaces;
+using Microsoft.VisualBasic.FileIO;
+using Microsoft.Win32;
 using log4net.Config;
 using log4net;
 
@@ -24,13 +29,17 @@ namespace FileMonkey.Picasso
     /// </summary>
     public partial class App : Application
     {
+        public static FmSettings Opciones { get; set; }
+
         public static Boolean SonarActivo { get; set; }
 
         public static MainWindow Home { get; set; }        
         public static InspectorDetail ActualInspectorDetail { get; set; }
+        public static Settings ConfigurarOpciones { get; set; }
 
         private static Inspectors _Inspectors;
         private static Log _RegistryWindow;
+
         public static Inspectors Inspectors
         {
             get
@@ -70,7 +79,7 @@ namespace FileMonkey.Picasso
 
         public void AddWork(Inspector insp)
         {
-            BackgroundWorker work = new BackgroundWorker();
+            var work = new BackgroundWorker();
 
             work.WorkerReportsProgress = true;
             work.WorkerSupportsCancellation = true;
@@ -103,15 +112,41 @@ namespace FileMonkey.Picasso
             RemoveWork(insp);
             AddWork(insp);
         }
+
+        private void LoadOpciones()
+        {
+            if(File.Exists("Settings.xml"))
+            {
+                Stream fVault = new FileStream("Settings.xml", FileMode.Open);
+
+                var unMarshall = new XmlSerializer(typeof(FmSettings));
+                Opciones = (FmSettings)unMarshall.Deserialize(fVault);
+
+                fVault.Close();
+            }
+            else
+            {
+                Opciones = new FmSettings();
+            }
+        }
+
         
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            SystemEvents.SessionSwitch += SystemEventsOnSessionSwitch;
+            SystemEvents.SessionEnded += SystemEventsOnSessionEnded;
+            
+
+
             swriter = new StringWriter();
             Console.SetOut(swriter);
 
             XmlConfigurator.Configure();
             
             RegistrarLog("<b>Inicializando la aplicación...</b>");
+
+            RegistrarLog("<b>Cargando opciones de la aplicación...</b>");
+            LoadOpciones();
             
             SonarActivo = true;
 
@@ -119,19 +154,26 @@ namespace FileMonkey.Picasso
 
             try
             {
-                IPersistence<Inspector> servInsp = new Persistence<Inspector>();
-                var inspFilter = new Inspector
-                                           {
-                                               Enable = true
-                                           };
+                IPersistence<FileInspector> servInspF = new Persistence<FileInspector>();
+                var inspFilterF = new FileInspector();
 
+                var rastreadoresF = servInspF.GetEntities(inspFilterF);
 
-                var rastreadores = servInsp.GetEntities(inspFilter);
-
-                foreach (var insp in rastreadores)
+                foreach (var insp in rastreadoresF)
                 {
                     AddWork(insp);
                 }
+
+                IPersistence<ServiceInspector> servInspV = new Persistence<ServiceInspector>();
+                var inspFilterV = new ServiceInspector();
+
+                var rastreadoresV = servInspV.GetEntities(inspFilterV);
+
+                foreach (var insp in rastreadoresV)
+                {
+                    AddWork(insp);
+                }
+
                 
             }
             catch (Exception ex)
@@ -140,6 +182,56 @@ namespace FileMonkey.Picasso
             }
 
             RegistrarLog("<b>Inicialización de la aplicación Finalizada</b>");
+        }
+
+        private void SystemEventsOnSessionEnded(object sender, SessionEndedEventArgs sessionEndedEventArgs)
+        {
+            switch (sessionEndedEventArgs.Reason)
+            {
+                case SessionEndReasons.Logoff:
+                    SendPushNotif("Notificacion de seguridad", "Su sesion de usuario ha sido cerrada.");
+                    break;
+                case SessionEndReasons.SystemShutdown:
+                    SendPushNotif("Notificacion de seguridad", "Su equipo ha sido apagado.");
+                    break;
+            }
+        }
+
+        private void SystemEventsOnSessionSwitch(object sender, SessionSwitchEventArgs sessionSwitchEventArgs)
+        {
+            switch (sessionSwitchEventArgs.Reason)
+            {
+                case SessionSwitchReason.SessionLogon:
+                    //Logon
+                    SendPushNotif("Notificacion de seguridad", "Su sesion de usuario ha sido iniciada.");
+
+                    break;
+                case SessionSwitchReason.SessionLogoff:
+                    //Logoff
+                    SendPushNotif("Notificacion de seguridad", "Su sesion de usuario ha sido cerrada.");
+
+                    break;
+                case SessionSwitchReason.RemoteConnect:
+                    //Remote Connect
+                    SendPushNotif("Notificacion de seguridad", "Se ha iniciado una conexion remota a su equipo.");
+
+                    break;
+                case SessionSwitchReason.RemoteDisconnect:
+                    //Remote Disconnect
+                    SendPushNotif("Notificacion de seguridad", "Se ha cerrado una conexion remota a su equipo.");
+
+                    break;
+                case SessionSwitchReason.SessionLock:
+                    //lock
+                    SendPushNotif("Notificacion de seguridad", "Su equipo ha sido bloqueado.");
+
+                    break;
+                case SessionSwitchReason.SessionUnlock:
+                    //Unlock
+                    SendPushNotif("Notificacion de seguridad", "Su equipo ha sido desbloqueado.");
+
+                    break;
+            }
         }
 
         private void bw_DoWork(object sender, DoWorkEventArgs e)
@@ -153,27 +245,38 @@ namespace FileMonkey.Picasso
 
             while (inspector.Enable.Value)
             {
-                if (worker.CancellationPending == true)
+                if (worker.CancellationPending)
                 {
                     RegistrarLog(prefix + "Cancelando rastreador " + " ...", worker);
 
                     e.Cancel = true;
                     return;
                 }
-                else
+                
+                if (SonarActivo)
                 {
-                    if (SonarActivo)
+                    RegistrarLog(prefix + "Ejecutando rastreador...", worker);
+
+                    switch (inspector.InspectorType)
                     {
+                        case (int) Inspector.EnumInspectorType.File:
+                            ExecuteSonarFile(inspector as FileInspector, prefix, worker);
 
-                        ExecuteSonar(inspector, prefix, worker);
+                            break;
+                        case (int)Inspector.EnumInspectorType.Service:
+                            //ExecuteSonarFile(inspector, prefix, worker);
+
+                            break;
                     }
-
-                    WaitTime(inspector.CheckPeriod.Value);
+                    
+                    RegistrarLog(prefix + "Fin de la ejecución del rastreador", worker);
                 }
+
+                WaitTime(inspector.CheckPeriod.Value);
             }
         }
 
-        private void ExecuteSonar(Inspector inspector, String prefix, BackgroundWorker worker)
+        private void ExecuteSonarFile(FileInspector inspector, String prefix, BackgroundWorker worker)
         {
             var dir = new DirectoryInfo(inspector.Path);
 
@@ -216,13 +319,13 @@ namespace FileMonkey.Picasso
                     }
             }
 
-            RegistrarLog(prefix + "Ejecutando rastreador...", worker);
+            var listMsg = new List<string>();
 
             string msgFile = string.Empty;
 
             foreach (var file in files)
             {
-                if (inspector.Action == (int)Inspector.TypeActions.MoveSubDir)
+                if (inspector.Action == (int)FileInspector.TypeActions.MoveSubDir)
                 {
                     String destName = inspector.SubDirAction + Path.DirectorySeparatorChar + file.Name;
 
@@ -248,31 +351,61 @@ namespace FileMonkey.Picasso
                 {
                     RegistrarLog(prefix + "Eliminando fichero " + file.FullName + "...", worker);
 
-                    file.Delete();
-
+                    FileSystem.DeleteDirectory(file.FullName, UIOption.OnlyErrorDialogs, 
+                        RecycleOption.SendToRecycleBin);
+                    
                     RegistrarLog(prefix + "Fichero eliminado correctamente", worker);
                 }
 
-
-                if(string.IsNullOrWhiteSpace(msgFile))
+                if (string.Concat(msgFile, file.Name).Length < 485)
                 {
-                    msgFile += file.Name;
+                    if (string.IsNullOrWhiteSpace(msgFile))
+                    {
+                        msgFile += file.Name;
+                    }
+                    else
+                    {
+                        msgFile += ", " + file.Name;
+                    }
                 }
                 else
                 {
-                    msgFile += ", " + file.Name;
+                    listMsg.Add(msgFile);
+
+                    msgFile = file.Name;
                 }
             }
 
-            if (inspector.EnablePushNotification.HasValue && inspector.EnablePushNotification.Value
-                    && !string.IsNullOrWhiteSpace(msgFile))
+            if (!string.IsNullOrWhiteSpace(Opciones.PushoverUserKey)
+                && inspector.EnablePushNotification.HasValue 
+                && inspector.EnablePushNotification.Value
+                && !string.IsNullOrWhiteSpace(msgFile))
             {
-                RegistrarLog(prefix + "Enviando notificación Push...", worker);
-                SendPushNotif(inspector.Name, "Ficheros Procesados: " + msgFile);
-                RegistrarLog(prefix + "Notificación enviada correctamente", worker);
-            }
+                foreach (var msgQueue in listMsg)
+                {
+                    RegistrarLog(prefix + "Enviando notificación Push...", worker);
 
-            RegistrarLog(prefix + "Fin de la ejecución del rastreador", worker);
+                    if (SendPushNotif(inspector.Name, "Ficheros Procesados: " + msgQueue))
+                    {
+                        RegistrarLog(prefix + "Notificación enviada correctamente", worker);
+                    }
+                    else
+                    {
+                        RegistrarLog(prefix + "Error al enviar la notificación", worker);
+                    }
+                }
+
+                RegistrarLog(prefix + "Enviando notificación Push...", worker);
+
+                if(SendPushNotif(inspector.Name, "Ficheros Procesados: " + msgFile))
+                {
+                    RegistrarLog(prefix + "Notificación enviada correctamente", worker);
+                }
+                else
+                {
+                    RegistrarLog(prefix + "Error al enviar la notificación", worker);
+                }
+            }
         }
         
         private void WaitTime(int pValue)
@@ -321,17 +454,11 @@ namespace FileMonkey.Picasso
         {
             //Registrar en el log el resultado del rastreador
 
-            if (e.Cancelled == true)
+            if (e.Cancelled)
             {
                 
             }
-
-            else if (!(e.Error == null))
-            {
-                
-            }
-
-            else
+            else if (e.Error != null)
             {
                 
             }
@@ -374,9 +501,26 @@ namespace FileMonkey.Picasso
             RegistryWindow = null;
         }
 
-        void SendPushNotif(string title, string message)
+        bool SendPushNotif(string title, string message)
         {
-            //TODO
+            string paramPushover = string.Format("user={0}&message={1}&title={2}", 
+                Opciones.PushoverUserKey, message,title);
+
+            if(!string.IsNullOrWhiteSpace(Opciones.PushoverDeviceName))
+            {
+                paramPushover += "&device=" + Opciones.PushoverDeviceName;
+            }
+
+            string res = HttpPost("https://api.pushover.net/1/messages.json", 
+                "token=zjriLuuThOsusykQ8rEpIiJrBVUC82&" 
+                + paramPushover);
+
+            if (res != null && res.EndsWith(":1}"))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         string HttpPost(string uri, string parameters)
@@ -400,7 +544,6 @@ namespace FileMonkey.Picasso
             }
             catch (WebException ex)
             {
-                MessageBox.Show(ex.Message, "HttpPost: Request error");
             }
             finally
             {
@@ -420,8 +563,8 @@ namespace FileMonkey.Picasso
             }
             catch (WebException ex)
             {
-                MessageBox.Show(ex.Message, "HttpPost: Response error");
             }
+
             return null;
         } // end HttpPost 
 
