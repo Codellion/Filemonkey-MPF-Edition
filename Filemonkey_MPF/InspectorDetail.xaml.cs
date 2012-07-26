@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using FileMonkey.Pandora.dal.entities;
 using System.Windows.Forms;
 using Memento.Persistence;
@@ -65,6 +66,16 @@ namespace FileMonkey.Picasso
             {
                 rbtMoveSubDir.IsEnabled = false;
                 rbtDeleteFiles.IsEnabled = false;
+            }
+
+            if(!Inspector.EnablePushNotification.HasValue)
+            {
+                Inspector.EnablePushNotification = false;
+            }
+
+            if(Inspector.EnablePushNotification.Value)
+            {
+                imgPush.Source = new BitmapImage(new Uri(@"images/pushover_on.png", UriKind.Relative));
             }
                 
             RulesRefresh(null);
@@ -328,6 +339,20 @@ namespace FileMonkey.Picasso
         private void StackPanel_MouseDown(object sender, MouseButtonEventArgs e)
         {
             OptionPressed = true;
+        }
+
+        private void pnlPushoverMonitor_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Inspector.EnablePushNotification = !Inspector.EnablePushNotification;
+
+            if (Inspector.EnablePushNotification.Value)
+            {
+                imgPush.Source = new BitmapImage(new Uri(@"images/pushover_on.png", UriKind.Relative));
+            }
+            else
+            {
+                imgPush.Source = new BitmapImage(new Uri(@"images/pushover_off.png", UriKind.Relative));
+            }
         }
     }
 }

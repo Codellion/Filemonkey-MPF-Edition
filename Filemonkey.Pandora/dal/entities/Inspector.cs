@@ -53,13 +53,20 @@ namespace FileMonkey.Pandora.dal.entities
             get { return Get<string>(); }
         }
 
+        [Field(Name = "Push")]
+        public Boolean? EnablePushNotification
+        {
+            set { Set(value); }
+            get { return Get<Boolean?>(); }
+        }
+        
         [Relation("Inspector", RelationType.Dependences)]
         public Dependences<RuleFile> Rules
         {
             set { Set(value); }
             get { return Get<Dependences<RuleFile>>(); }
         }
-
+        
         public Inspector()
         {
             Enable = true;

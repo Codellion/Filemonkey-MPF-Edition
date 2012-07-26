@@ -4,6 +4,8 @@ using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Windows;
 using System.ComponentModel;
 using FileMonkey.Pandora.dal;
@@ -214,7 +216,9 @@ namespace FileMonkey.Picasso
                     }
             }
 
-            RegistrarLog(prefix + "Ejecutando rastreador...", worker);                                           
+            RegistrarLog(prefix + "Ejecutando rastreador...", worker);
+
+            string msgFile = string.Empty;
 
             foreach (var file in files)
             {
@@ -247,7 +251,25 @@ namespace FileMonkey.Picasso
                     file.Delete();
 
                     RegistrarLog(prefix + "Fichero eliminado correctamente", worker);
-                }                            
+                }
+
+
+                if(string.IsNullOrWhiteSpace(msgFile))
+                {
+                    msgFile += file.Name;
+                }
+                else
+                {
+                    msgFile += ", " + file.Name;
+                }
+            }
+
+            if (inspector.EnablePushNotification.HasValue && inspector.EnablePushNotification.Value
+                    && !string.IsNullOrWhiteSpace(msgFile))
+            {
+                RegistrarLog(prefix + "Enviando notificación Push...", worker);
+                SendPushNotif(inspector.Name, "Ficheros Procesados: " + msgFile);
+                RegistrarLog(prefix + "Notificación enviada correctamente", worker);
             }
 
             RegistrarLog(prefix + "Fin de la ejecución del rastreador", worker);
@@ -351,6 +373,57 @@ namespace FileMonkey.Picasso
         {
             RegistryWindow = null;
         }
+
+        void SendPushNotif(string title, string message)
+        {
+            //TODO
+        }
+
+        string HttpPost(string uri, string parameters)
+        {
+            // parameters: name1=value1&name2=value2	
+            WebRequest webRequest = WebRequest.Create(uri);
+            //string ProxyString = 
+            //   System.Configuration.ConfigurationManager.AppSettings
+            //   [GetConfigKey("proxy")];
+            //webRequest.Proxy = new WebProxy (ProxyString, true);
+            //Commenting out above required change to App.Config
+            webRequest.ContentType = "application/x-www-form-urlencoded";
+            webRequest.Method = "POST";
+            byte[] bytes = Encoding.ASCII.GetBytes(parameters);
+            Stream os = null;
+            try
+            { // send the Post
+                webRequest.ContentLength = bytes.Length;   //Count bytes to send
+                os = webRequest.GetRequestStream();
+                os.Write(bytes, 0, bytes.Length);         //Send it
+            }
+            catch (WebException ex)
+            {
+                MessageBox.Show(ex.Message, "HttpPost: Request error");
+            }
+            finally
+            {
+                if (os != null)
+                {
+                    os.Close();
+                }
+            }
+
+            try
+            { // get the response
+                WebResponse webResponse = webRequest.GetResponse();
+                if (webResponse == null)
+                { return null; }
+                StreamReader sr = new StreamReader(webResponse.GetResponseStream());
+                return sr.ReadToEnd().Trim();
+            }
+            catch (WebException ex)
+            {
+                MessageBox.Show(ex.Message, "HttpPost: Response error");
+            }
+            return null;
+        } // end HttpPost 
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {

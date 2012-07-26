@@ -61,6 +61,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libs\External\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Memento.DataAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libs\Memento Persistence Framework\Releases\0.9.0.0\Memento.DataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="Memento.DataAccess.OleDb">
+      <HintPath>..\..\..\Libs\Memento Persistence Framework\Releases\0.9.0.0\Providers\Memento.DataAccess.OleDb.dll</HintPath>
+    </Reference>
     <Reference Include="Memento.Persistence, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libs\Memento Persistence Framework\Releases\0.9.0.0\Memento.Persistence.dll</HintPath>
@@ -232,8 +239,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DataContext.sdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="images\pushover_off.png" />
+    <Resource Include="images\pushover_on.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">

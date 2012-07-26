@@ -27,6 +27,9 @@
                 <Image Source="/Resources/trash.png" Width="32" Height="32" Stretch="Uniform" />
                 <Label Content="Eliminar" FontFamily="Moire" Width="100" FontSize="14" HorizontalContentAlignment="Center" VerticalAlignment="Center" />
             </StackPanel>
+            <StackPanel Name="pnlPushoverMonitor" Margin="60 0 0 0" Orientation="Horizontal" Height="Auto" HorizontalAlignment="Stretch" Width="Auto" Grid.Row="1" Cursor="Hand" MouseUp="pnlPushoverMonitor_MouseUp">
+                <Image Name="imgPush" Source="/images/pushover_off.png" Width="83" Height="18" Stretch="Uniform" />                
+            </StackPanel>
         </StackPanel>        
         <StackPanel Grid.Row="1" Margin="0 0 0 10">
             <Label Content="Nombre:" FontWeight="Bold" FontSize="14" FontFamily="Moire"/>
