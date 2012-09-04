@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using FileMonkey.Pandora.dal.entities;
-using System.Windows.Forms;
 using Memento.Persistence;
 using Memento.Persistence.Interfaces;
 using MessageBox = System.Windows.MessageBox;

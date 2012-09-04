@@ -7,12 +7,6 @@ namespace FileMonkey.Pandora.dal.entities
     [Table(Name = "Inspector")]
     public class ServiceInspector : Inspector
     {
-        public enum TypeActions
-        {
-            CheckStart,
-            CheckStop
-        }
-
         public String ServiceName
         {
             set { Set(value); }
